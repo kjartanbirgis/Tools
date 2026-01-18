@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
+using Tools.TextAnalysis.Language;
 
 namespace Tools.TextAnalysis
 {
@@ -26,9 +27,10 @@ namespace Tools.TextAnalysis
             }
             return frequencies;
         }
-        static public Dictionary<char,int> CountCharacterFrequencies(string text, char[] alphabet)
+        static public Dictionary<char,int> CountCharacterFrequencies(string text, AlphabetType alphabetType)
         {
             string textLower = text.ToLowerInvariant();
+            char[] alphabet = Language.Alphabets.GetAlphabet(alphabetType);
             var filteredText = new string(textLower.Where(c => alphabet.Contains(c)).ToArray());
             var frequencies = new Dictionary<char, int>();
             foreach (var ch in filteredText)

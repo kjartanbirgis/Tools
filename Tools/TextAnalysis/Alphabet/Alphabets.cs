@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Tools.TextAnalysis.Language
 {
     internal static class Alphabets
@@ -23,5 +24,16 @@ namespace Tools.TextAnalysis.Language
             'a','á','b','c','d','ð','e','é','f','g','h','i','í','j','k','l','m',
             'n','o','ó','p','q','r','s','t','u','ú','v','w','x','y','ý','z','þ','æ','ö'
         };
+
+        internal static char[] GetAlphabet(AlphabetType alphabetType)
+        {
+            return alphabetType switch
+            {
+                AlphabetType.IcelandicPre1974 => IcelandicAlphabetPre1974,
+                AlphabetType.Icelandic => IcelandicAlphabet,
+                AlphabetType.IcelandicExtended => IcelandicAlphabetWithEnglishLetters,
+                _ => throw new NotSupportedException($"The language type {alphabetType} is not supported."),
+            };
+        }
     }
 }
