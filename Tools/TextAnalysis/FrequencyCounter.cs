@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,10 +26,12 @@ namespace Tools.TextAnalysis
             }
             return frequencies;
         }
-        static public Dictionary<char,int> CountCharacterFrequencies(string text)
+        static public Dictionary<char,int> CountCharacterFrequencies(string text, char[] alphabet)
         {
+            string textLower = text.ToLowerInvariant();
+            var filteredText = new string(textLower.Where(c => alphabet.Contains(c)).ToArray());
             var frequencies = new Dictionary<char, int>();
-            foreach (var ch in text)
+            foreach (var ch in filteredText)
             {
                 if (char.IsWhiteSpace(ch)) continue;
                 if (frequencies.ContainsKey(ch))
