@@ -43,7 +43,7 @@ namespace Tools.Cryptography.Substition
                     EncryptedText += alphabet[shiftedIndex];
                 }
                 else
-                    EncryptedText += c; // Placeholder: just appending the original character
+                    EncryptedText += c; 
             }
             return EncryptedText;
         }
@@ -80,7 +80,7 @@ namespace Tools.Cryptography.Substition
                     decryptedText += alphabet[shiftedIndex];
                 }
                 else
-                    decryptedText += c; // Placeholder: just appending the original character
+                    decryptedText += c;
 
 
             }

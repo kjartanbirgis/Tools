@@ -35,7 +35,7 @@ namespace Tools.TextAnalysis
             var frequencies = new Dictionary<char, int>();
             foreach (var ch in filteredText)
             {
-                if (char.IsWhiteSpace(ch)) continue;
+                //if (char.IsWhiteSpace(ch)) continue;
                 if (frequencies.ContainsKey(ch))
                 {
                     frequencies[ch]++;
