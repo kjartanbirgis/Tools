@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Noise\Radioactive\" />
+    <Folder Include="Noise\Timing\" />
+  </ItemGroup>
+
 </Project>
