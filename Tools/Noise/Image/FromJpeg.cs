@@ -1,14 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tools.Noise.Mixer;
 
 namespace Tools.Noise.Image
 {
-    public class FromJpeg
+    public static class FromJpeg
     {
-        public static bool TryExtractScanData(byte[] jpeg, out byte[] scanData)
+        public static byte[] DeriveKeyFromJpeg(string jpegPath, int keyLen)
+        {
+            // 1) Read bytes + timing jitter
+            var sw = Stopwatch.StartNew();
+            byte[] fileBytes = File.ReadAllBytes(jpegPath);
+            sw.Stop();
+
+            long ticks = sw.ElapsedTicks;
+
+            // 2) Extract JPEG scan data if possible; fallback to full file bytes
+            byte[] scan = TryExtractScanData(fileBytes, out var scanData)
+                ? scanData
+                : fileBytes;
+
+            // 3) Mix scan bytes + timing into state
+            uint state = 0xA5A5A5A5;               // non-zero init (not entropy)
+            state = SimpleMixer.MixU64(state, (ulong)ticks);   // add a bit of timing jitter
+
+            foreach (byte b in scan)
+                state = SimpleMixer.MixByte(state, b);
+
+            // 4) Expand into keyLen bytes
+            return SimpleMixer.Expand(state, keyLen);
+        }
+        internal static bool TryExtractScanData(byte[] jpeg, out byte[] scanData)
         {
             scanData = Array.Empty<byte>();
 
@@ -31,7 +57,7 @@ namespace Tools.Noise.Image
             return true;
         }
 
-        private static int FindMarker(byte[] data, byte a, byte b, int start)
+        internal static int FindMarker(byte[] data, byte a, byte b, int start)
         {
             for (int i = start; i < data.Length - 1; i++)
                 if (data[i] == a && data[i + 1] == b)
@@ -39,7 +65,7 @@ namespace Tools.Noise.Image
             return -1;
         }
 
-        private static int FindEoiInScan(byte[] data, int start)
+        internal static int FindEoiInScan(byte[] data, int start)
         {
             // In scan data:
             // - FF 00 is stuffed literal FF
