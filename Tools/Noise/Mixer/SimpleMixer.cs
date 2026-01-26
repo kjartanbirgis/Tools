@@ -40,13 +40,13 @@ namespace Tools.Noise.Mixer
             for (int i = 0; i < outLen; i++)
             {
                 // a little diffusion each byte
-                x ^= x >> 16;
-                x *= ExpandMIX1;
-                x ^= x >> 15;
-                x *= ExpandMIX2;
-                x ^= x >> 16;
+                x ^= x >> 16; //x er xorað x sem er búið að shifttast 16 bitum til hægri |000000000|xxxxxxxx|
+                x *= ExpandMIX1; //x margfaldað með fasta
+                x ^= x >> 15; //shiftum 15 bitum til hægri og xor-að við x |0000000x|xxxxxxxx|
+                x *= ExpandMIX2; //Margfölum x með öðrum fasta
+                x ^= x >> 16; //shiftum 16 bitum til hægri og xor-að við x |000000000|xxxxxxxx|
 
-                outp[i] = (byte)(x & 0xFF);
+                outp[i] = (byte)(x & 0xFF); //tökum lægstu 8 bita af x og setjum í array
             }
 
             return outp;
