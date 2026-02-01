@@ -11,12 +11,18 @@ namespace Tools.Noise.Mixer
         private const uint ExpandMIX1 = 0x7FEB352Du;
         private const uint ExpandMIX2 = 0x846CA68Bu;
         private const uint MixByteMIX1 = 0x9E3779B1u;
-
+        /// <summary>
+        /// Combines a 32-bit unsigned integer with a byte using XOR, bit rotation, and multiplication for mixing
+        /// purposes.
+        /// </summary>
+        /// <param name="s">The 32-bit unsigned integer to be mixed.</param>
+        /// <param name="b">The byte value to mix into the integer.</param>
+        /// <returns>The mixed 32-bit unsigned integer result.</returns>
         internal static uint MixByte(uint s, byte b)
         {
-            s ^= b;
-            s = RotL(s, 5);
-            s *= MixByteMIX1;
+            s ^= b; //xor-að s við b
+            s = RotL(s, 5); //rotate left um 5 bita bua til avalance
+            s *= MixByteMIX1; //margföldum s með prime tölu til að auka dreifingu
             return s;
         }
 
@@ -30,7 +36,12 @@ namespace Tools.Noise.Mixer
             return s;
         }
 
-        internal static uint RotL(uint x, int r) => (x << r) | (x >> (32 - r));
+
+        internal static uint RotL(uint x, int r)
+        {
+            r &= 31; //Gera r að vera innan 0-31
+            return (x << r) | (x >> (32 - r)); //Rotate left með því að shift-a x til vinstri og hægri 32-r og OR-a saman
+        }
 
         internal static byte[] Expand(uint seed, int outLen)
         {

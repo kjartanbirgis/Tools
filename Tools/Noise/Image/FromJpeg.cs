@@ -24,28 +24,28 @@ namespace Tools.Noise.Image
                 ? scanData
                 : fileBytes;
 
-            // 3) Mix scan bytes + timing into state
-            uint state = 0xA5A5A5A5;               // non-zero init (not entropy)
-            state = SimpleMixer.MixU64(state, (ulong)ticks);   // add a bit of timing jitter
+            uint state = 0xA5A5A5A5;              //1010 0101 in binary 32 bit pattern should have gone higher
+            state = SimpleMixer.MixU64(state, (ulong)ticks);   // blöndum saman tímanum og upphafsstöðunni 
 
             foreach (byte b in scan)
-                state = SimpleMixer.MixByte(state, b);
+                state = SimpleMixer.MixByte(state, b); // blöndum saman öllum bætunum í skönnunum er samt alltaf 32 bita
 
             // 4) Expand into keyLen bytes
             return SimpleMixer.Expand(state, keyLen);
         }
+
         internal static bool TryExtractScanData(byte[] jpeg, out byte[] scanData)
         {
             scanData = Array.Empty<byte>();
 
             // Find SOS (FF DA)
             int sos = FindMarker(jpeg, 0xFF, 0xDA, 0);
-            if (sos < 0 || sos + 4 >= jpeg.Length) return false;
+            if (sos < 0 || sos + 4 >= jpeg.Length) return false; //if the sos marker is not found or is too close to the end of the file
 
             // big-endian length at sos+2..sos+3
             int sosLen = (jpeg[sos + 2] << 8) | jpeg[sos + 3];
             int scanStart = sos + 2 + sosLen;
-            if (scanStart <= 0 || scanStart >= jpeg.Length) return false;
+            if (scanStart <= 0 || scanStart >= jpeg.Length) return false; //
 
             // Find EOI (FF D9) robustly within scan data
             int eoi = FindEoiInScan(jpeg, scanStart);
@@ -77,9 +77,9 @@ namespace Tools.Noise.Image
 
                 byte next = data[i + 1];
 
-                if (next == 0x00) { i += 1; continue; }          // stuffed
-                if (next == 0xD9) return i;                      // EOI
-                if (next >= 0xD0 && next <= 0xD7) { i += 1; continue; } // restart
+                if (next == 0x00) { i += 1; continue; }
+                if (next == 0xD9) { return i; }
+                if (next >= 0xD0 && next <= 0xD7) { i += 1; continue; } 
             }
             return -1;
         }
