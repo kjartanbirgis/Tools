@@ -39,15 +39,16 @@ namespace Tools.Cryptography.NumberTheory
             1087,1091,1093,1097,1103,1109,1117,1123,1129,1151,
             1153,1163,1171,1181,1187,1193,1201,1213,1217,1223
         };
-        public static bool IsProbablyPrime(BigInteger n, PrimalityAlgorithm algorithm = PrimalityAlgorithm.MillerRabin, int rounds = 16)
+        public static bool isProbablyPrime(BigInteger n, PrimalityAlgorithm algorithm = PrimalityAlgorithm.MillerRabin, int rounds = 16)
         {
             // Check small primes first
+            if (n == 2)
+            {
+                return true;
+            }
+
             foreach (int prime in smallPrimes)
             {
-                if (n == 2)
-                {
-                    return true;
-                }
                 if (n == prime)
                 {
                     return true;
