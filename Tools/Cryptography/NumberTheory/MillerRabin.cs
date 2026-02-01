@@ -38,15 +38,25 @@ namespace Tools.Cryptography.NumberTheory
             1087,1091,1093,1097,1103,1109,1117,1123,1129,1151,
             1153,1163,1171,1181,1187,1193,1201,1213,1217,1223
         };
-        
-        public static bool isProbablyPrime(BigInteger bigInteger, int rounds)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="rounds"></param>
+        /// <returns></returns>
+        public static bool isProbablyPrime(BigInteger n, int rounds = 16)
         {
-            if (bigInteger < 2)
+            if (n < 2)
+            {
                 return false;
-            if (bigInteger != 2 && bigInteger % 2 == 0)
+            }
+            if (n != 2 && n % 2 == 0)
+            {
                 return false;
+            }
+
             int s = 0;
-            BigInteger d = bigInteger - 1;
+            BigInteger d = n - 1;
             while (d % 2 == 0)
             {
                 d /= 2;
@@ -55,15 +65,15 @@ namespace Tools.Cryptography.NumberTheory
             Random rand = new Random();
             for (int i = 0; i < rounds; i++)
             {
-                BigInteger a = RandomBigInteger(2, bigInteger - 2, rand);
-                BigInteger x = BigInteger.ModPow(a, d, bigInteger);
-                if (x == 1 || x == bigInteger - 1)
+                BigInteger a = RandomBigInteger(2, n - 2, rand);
+                BigInteger x = BigInteger.ModPow(a, d, n);
+                if (x == 1 || x == n - 1)
                     continue;
                 bool continueOuter = false;
                 for (BigInteger r = 1; r < s; r++)
                 {
-                    x = BigInteger.ModPow(x, 2, bigInteger);
-                    if (x == bigInteger - 1)
+                    x = BigInteger.ModPow(x, 2, n);
+                    if (x == n - 1)
                     {
                         continueOuter = true;
                         break;
